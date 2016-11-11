@@ -3,13 +3,14 @@
 #include <fstream>
 #include <cstdlib>
 #include <iterator>
+#include <stdlib.h>
 
 using namespace std;
 
 int PDA::index = 0;
 
 PDA::PDA() {
-	*currentState = this->q0;
+	currentState = &q0;
 	stack.push_back('z');
 	sequence = "";
 }
@@ -27,13 +28,14 @@ void PDA::readSequence() {
 		while (index < temp.length() ) {
 			evaluate(obj);
 		}
+		cout << "The sequence is valid" << endl;
 	}else {
 		cout << "The file could not be opend" << endl;
 	}
 	return ;
 }
 
-int ifOrElseSequence(PDA& arg) {
+int PDA::ifOrElseSequence(PDA& arg) {
 	//check if the current element is if
 	char first = arg.sequence[arg.index];
 	char second = arg.sequence[arg.index + 1];
@@ -44,7 +46,7 @@ int ifOrElseSequence(PDA& arg) {
 	}
 }
 
-void evaluate(PDA& arg) {
+void PDA::evaluate(PDA& arg) {
 	// temp = 0 (if)  temp = 1 (else) 
 	int temp = arg.ifOrElseSequence(arg);
 	if (temp == 0 ) {
@@ -56,6 +58,7 @@ void evaluate(PDA& arg) {
 	//pop the top element from stack
 		if (arg.stack[0] == 'z') {
 			cout << " Not a valid sequence of paired ifs and elses" << endl;
+			exit (EXIT_FAILURE);
 			return;
 			//exit( "exit_code" );
 		}	
@@ -66,7 +69,7 @@ void evaluate(PDA& arg) {
 }
 
 void PDA::pushStack(PDA& arg) {
-	vector<int>::iterator it;
+	vector<int>::iterator it = stack.begin();
 	it = arg.stack.begin();
 	arg.stack.insert(it,0);
 	return;
@@ -75,5 +78,5 @@ void PDA::pushStack(PDA& arg) {
 void PDA::popStack(PDA& arg) {
 	vector<int>::iterator it;
 	it = arg.stack.begin();	
-	arg.stack.erase(it,0);
+	arg.stack.erase(it);
 }
