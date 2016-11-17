@@ -11,7 +11,6 @@ int PDA::index = 0;
 
 PDA::PDA() {
 	currentState = &q0;
-	stack.push_back('z');
 	sequence = "";
 }
 
@@ -23,12 +22,19 @@ void PDA::readSequence() {
 	myfile.open("sequence.txt");
 	if (myfile.is_open()) {
 		//reads the sequence from the file into the private member sequence
-		getline(myfile, temp);
+		while (getline(myfile, temp)){
+		obj.stack.push_back('z');
 		obj.sequence = temp;
 		while (index < temp.length() ) {
 			evaluate(obj);
 		}
-		cout << "The sequence is valid" << endl;
+		cout << "Correct sequence" << endl;
+	  obj.stack.erase(obj.stack.begin(), obj.stack.end());
+	  obj.index = 0;
+	  //for (int i = 0; i < obj.stack.size(); i++) {
+	  //	cout << obj.stack[i] << endl;
+	  //}
+	}
 	}else {
 		cout << "The file could not be opend" << endl;
 	}
@@ -57,8 +63,10 @@ void PDA::evaluate(PDA& arg) {
 	} else {
 	//pop the top element from stack
 		if (arg.stack[0] == 'z') {
-			cout << " Not a valid sequence of paired ifs and elses" << endl;
+			cout << "Sequence is syntactically incorrect" << endl;
 			exit (EXIT_FAILURE);
+			arg.stack.clear();
+			arg.index = 0;
 			return;
 			//exit( "exit_code" );
 		}	
@@ -77,6 +85,14 @@ void PDA::pushStack(PDA& arg) {
 
 void PDA::popStack(PDA& arg) {
 	vector<int>::iterator it;
-	it = arg.stack.begin();	
-	arg.stack.erase(it);
+	it = arg.stack.begin();
+	int len = arg.stack.size();
+	if (len == 0 && len == 1) {
+		cout << " Sequence is syntactically incorrect" << endl;
+		exit (EXIT_FAILURE);
+		arg.stack.clear();
+		arg.index = 0;
+		return;
+	}	
+	arg.stack.erase(arg.stack.begin(), arg.stack.begin() + 1);
 }
